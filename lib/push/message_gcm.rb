@@ -38,7 +38,7 @@ module Push
 
           if msg == "NotRegistered" or msg == "InvalidRegistration"
             with_database_reconnect_and_retry(connection.name) do
-              Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device) # follow-up: delete device
+              Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device, :follow_up => 'delete')
             end
           end
 
@@ -46,10 +46,10 @@ module Push
           raise Push::DeliveryError.new(response.code, id, msg, "GCM")
         elsif hsh["canonical_ids"] == 1
           # success, but update device token
-          # follow-up: delete device
-          # with_database_reconnect_and_retry(connection.name) do
-          #   Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device) # follow-up: update device
-          # end
+          update_to = hsh["results"][0]["registration_id"]
+          with_database_reconnect_and_retry(connection.name) do
+            Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device, :follow_up => 'update', :update_to => update_to)
+          end
         end
       else
         Push::Daemon.logger.error("[#{connection.name}] Error received.")
