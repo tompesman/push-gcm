@@ -6,7 +6,7 @@ module Push
     # Note that this includes both the size of the keys as well as the values.
 
     store :properties, accessors: [:collapse_key, :delay_when_idle, :time_to_live, :payload]
-    attr_accessible :device, :collapse_key, :delay_when_idle, :time_to_live, :payload
+    attr_accessible :app, :device, :collapse_key, :delay_when_idle, :time_to_live, :payload
 
     def to_message
       hsh = Hash.new
@@ -38,7 +38,8 @@ module Push
 
           if msg == "NotRegistered" or msg == "InvalidRegistration"
             with_database_reconnect_and_retry(connection.name) do
-              Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device, :follow_up => 'delete')
+              Push::FeedbackGcm.create!(:app => connection.provider.configuration[:name], :failed_at => Time.now,
+                :device => device, :follow_up => 'delete')
             end
           end
 
@@ -48,7 +49,8 @@ module Push
           # success, but update device token
           update_to = hsh["results"][0]["registration_id"]
           with_database_reconnect_and_retry(connection.name) do
-            Push::FeedbackGcm.create!(:failed_at => Time.now, :device => device, :follow_up => 'update', :update_to => update_to)
+            Push::FeedbackGcm.create!(:app => connection.provider.configuration[:name], :failed_at => Time.now,
+              :device => device, :follow_up => 'update', :update_to => update_to)
           end
         end
       else

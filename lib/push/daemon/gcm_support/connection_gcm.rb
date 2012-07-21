@@ -2,13 +2,13 @@ module Push
   module Daemon
     module GcmSupport
       class ConnectionGcm
-        attr_reader :response, :name
+        attr_reader :response, :name, :provider
         PUSH_URL = "https://android.googleapis.com/gcm/send"
         IDLE_PERIOD = 5.minutes
 
         def initialize(provider, i)
           @provider = provider
-          @name = "ConnectionGcm #{i}"
+          @name = "#{@provider.configuration[:name]}: ConnectionGcm #{i}"
         end
 
         def connect

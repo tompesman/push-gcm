@@ -1,6 +1,8 @@
 require 'net/http'
 require 'net/https'
 require 'push-gcm/version'
+require 'push/configuration'
+require 'push/configuration_gcm'
 require 'push/message'
 require 'push/message_gcm'
 require 'push/feedback'
