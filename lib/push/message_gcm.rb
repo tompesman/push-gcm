@@ -55,7 +55,7 @@ module Push
         end
       else
         Push::Daemon.logger.error("[#{connection.name}] Error received.")
-        raise Push::DeliveryError.new(response.code, id, response.body, "GCM")
+        raise Push::DeliveryError.new(response.code, id, "#{response.message} #{response.body if response.body_permitted?}", "GCM")
       end
     end
   end
