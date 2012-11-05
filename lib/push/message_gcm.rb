@@ -30,7 +30,6 @@ module Push
         hsh = MultiJson.load(response.body)
         if hsh["failure"] == 1
           msg = hsh["results"][0]["error"]
-          Push::Daemon.logger.error("[#{connection.name}] Error received.")
 
           # MissingRegistration, handled by validation
           # MismatchSenderId, configuration error by client
@@ -41,10 +40,10 @@ module Push
               Push::FeedbackGcm.create!(:app => connection.provider.configuration[:name], :failed_at => Time.now,
                 :device => device, :follow_up => 'delete')
             end
-            raise Push::DeliveryError.new(response.code, id, msg, "GCM", false)
-          else
-            raise Push::DeliveryError.new(response.code, id, msg, "GCM")
           end
+
+          Push::Daemon.logger.error("[#{connection.name}] Error received.")
+          raise Push::DeliveryError.new(response.code, id, msg, "GCM", false)
         elsif hsh["canonical_ids"] == 1
           # success, but update device token
           update_to = hsh["results"][0]["registration_id"]
@@ -55,7 +54,7 @@ module Push
         end
       else
         Push::Daemon.logger.error("[#{connection.name}] Error received.")
-        raise Push::DeliveryError.new(response.code, id, response.message, "GCM")
+        raise Push::DeliveryError.new(response.code, id, response.message, "GCM", false)
       end
     end
   end
