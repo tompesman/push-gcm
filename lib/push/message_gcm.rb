@@ -5,7 +5,7 @@ module Push
     # Note that this includes both the size of the keys as well as the values.
 
     store :properties, accessors: [:collapse_key, :delay_when_idle, :time_to_live, :payload]
-    attr_accessible :app, :device, :collapse_key, :delay_when_idle, :time_to_live, :payload
+    attr_accessible :app, :device, :collapse_key, :delay_when_idle, :time_to_live, :payload if defined?(ActiveModel::MassAssignmentSecurity)
 
     def to_message
       hsh = Hash.new
