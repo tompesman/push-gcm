@@ -41,7 +41,7 @@ module Push
             end
           end
 
-          Push::Daemon.logger.error("[#{connection.name}] Error received.")
+          Push.logger.error("[#{connection.name}] Error received.")
           raise Push::DeliveryError.new(response.code, id, msg, "GCM", false)
         elsif hsh["canonical_ids"] == 1
           # success, but update device token
@@ -52,7 +52,7 @@ module Push
           end
         end
       else
-        Push::Daemon.logger.error("[#{connection.name}] Error received.")
+        Push.logger.error("[#{connection.name}] Error received.")
         raise Push::DeliveryError.new(response.code, id, response.message, "GCM", false)
       end
     end

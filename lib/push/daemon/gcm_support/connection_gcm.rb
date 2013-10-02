@@ -18,7 +18,7 @@ module Push
           uri = URI.parse(PUSH_URL)
           @connection = open_http(uri.host, uri.port)
           @connection.start
-          Push::Daemon.logger.info("[#{@name}] Connected to #{PUSH_URL}")
+          Push.logger.info("[#{@name}] Connected to #{PUSH_URL}")
         end
 
         def write(data)
@@ -74,7 +74,7 @@ module Push
           rescue EOFError, Errno::ECONNRESET, Timeout::Error => e
             retry_count += 1
 
-            Push::Daemon.logger.error("[#{@name}] Lost connection to #{PUSH_URL} (#{e.class.name}), reconnecting ##{retry_count}...")
+            Push.logger.error("[#{@name}] Lost connection to #{PUSH_URL} (#{e.class.name}), reconnecting ##{retry_count}...")
 
             if retry_count <= 3
               reconnect
@@ -94,7 +94,7 @@ module Push
         end
 
         def reconnect_idle
-          Push::Daemon.logger.info("[#{@name}] Idle period exceeded, reconnecting...")
+          Push.logger.info("[#{@name}] Idle period exceeded, reconnecting...")
           reconnect
         end
 
