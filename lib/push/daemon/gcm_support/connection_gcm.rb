@@ -5,7 +5,7 @@ module Push
 
       class ConnectionGcm
         attr_reader :response, :name, :provider
-        PUSH_URL = "https://android.googleapis.com/gcm/send"
+        PUSH_URL = "https://fcm.googleapis.com/fcm/send"
         IDLE_PERIOD = 5.minutes
 
         def initialize(provider, i)
